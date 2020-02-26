@@ -17,7 +17,7 @@ public class Exercise {
     @Column(name = "name")
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "id",insertable = false,updatable = false)
     private ExerciseType exerciseType;
 
