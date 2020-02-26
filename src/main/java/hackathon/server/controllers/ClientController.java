@@ -104,7 +104,6 @@ public class ClientController {
     @PostMapping("/exerciseRecords")
     public ResponseEntity exerciseRecords(@RequestBody ExerciseRecordRequest exerciseRecord) {
         DBInserter.insertExerciseRecord(exerciseRecord);
-        //DBInserter.insertExcelData(exerciseRecord.getExcelData());
         return new ResponseEntity(HttpStatus.OK) ;
     }
 

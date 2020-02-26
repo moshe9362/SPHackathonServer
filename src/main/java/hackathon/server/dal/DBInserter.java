@@ -35,7 +35,6 @@ public class DBInserter {
     public void insertExerciseRecord(ExerciseRecordRequest exerciseRecord) {
         ExerciseRecord recordForDB = mapExerciseApiToDB(exerciseRecord);
         ExerciseRecord result = exerciseRecordRepository.save(recordForDB);
-        System.out.println("Saved record in DB");
         long id = result.getId();
         List<ExcelDataRequest> excelDataList = exerciseRecord.getExcelData();
         List<ExcelData> mappedExcelDataList = mapExcelDataApiToDB(excelDataList, id);
@@ -47,12 +46,11 @@ public class DBInserter {
         for (ExcelDataRequest old : excelDataList) {
             ExcelData mappedExcelData = new ExcelData();
             mappedExcelData.setAngle(old.getAngle());
+            mappedExcelData.setExerciseRecordId(id);
 
-            // the following piece of shit is to convert string to timestamp
             Timestamp excelDataTimeStamp = Utils.convertStringToTimeStamp(old.getTimeStamp());
             mappedExcelData.setTimestamp(excelDataTimeStamp);
 
-            mappedExcelData.setExerciseRecordId(id);
             mappedExcelDataList.add(mappedExcelData);
         }
         return mappedExcelDataList;
@@ -73,6 +71,5 @@ public class DBInserter {
         for(ExcelData a : excelData) {
             excelDataRepository.save(a);
         }
-        System.out.println("Saved ExcelData in DB");
     }
 }
