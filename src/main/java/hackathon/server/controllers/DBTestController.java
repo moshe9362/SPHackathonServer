@@ -37,7 +37,7 @@ public class DBTestController {
     @ResponseBody
     public String createPatient() {
         Patient patient = new Patient();
-        patient.setIdNumber(209081900l);
+        patient.setIdNumber("209081900l");
         patient.setLastName("Vitkon");
         patient.setFirstName("Shaked");
         patientRepository.save(patient);
