@@ -6,6 +6,7 @@ import hackathon.server.dal.crud.ProtocolRepository;
 import hackathon.server.models.api.PatientLoginReply;
 import hackathon.server.models.api.PatientLoginRequest;
 import hackathon.server.models.api.PatientSignUpRequest;
+import hackathon.server.models.api.ProtocolShortDataReply;
 import hackathon.server.models.db.Patient;
 import hackathon.server.models.db.PatientToProtocol;
 import hackathon.server.models.db.Protocol;
@@ -90,9 +91,9 @@ public class ClientController {
         return patientLoginReply;
     }
 
-    @GetMapping()
-    public List getAllProtocols(){
-        List<Protocol> list = protocolRepository.findAll();
+    @GetMapping("/protocol")
+    public List<ProtocolShortDataReply> getAllProtocols(){
+        List<ProtocolShortDataReply> list = protocolRepository.findAllShort();
         return list;
     }
 }
