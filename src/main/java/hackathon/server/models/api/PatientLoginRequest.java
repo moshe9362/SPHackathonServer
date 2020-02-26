@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class PatientLoginRequest {
-    private long userIdNumber;
+    private String userIdNumber;
     private String password;
 }
