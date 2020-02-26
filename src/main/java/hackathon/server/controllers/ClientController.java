@@ -2,11 +2,13 @@ package hackathon.server.controllers;
 
 import hackathon.server.dal.crud.PatientRepository;
 import hackathon.server.dal.crud.PatientToProtocolRepository;
+import hackathon.server.dal.crud.ProtocolRepository;
 import hackathon.server.models.api.PatientLoginReply;
 import hackathon.server.models.api.PatientLoginRequest;
 import hackathon.server.models.api.PatientSignUpRequest;
 import hackathon.server.models.db.Patient;
 import hackathon.server.models.db.PatientToProtocol;
+import hackathon.server.models.db.Protocol;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,7 @@ import java.util.UUID;
 @Controller
 public class ClientController {
     private PatientRepository patientRepository;
+    private ProtocolRepository protocolRepository;
     private PatientToProtocolRepository patientToProtocolRepository;
 
     @Autowired
@@ -86,5 +89,8 @@ public class ClientController {
         return patientLoginReply;
     }
 
-
+    public List getAllProtocols(){
+        List<Protocol> list = protocolRepository.findAll();
+        return list;
+    }
 }
