@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.sql.Date;
 import java.time.Instant;
@@ -33,12 +34,13 @@ public class ClientController {
     }
 
     @PostMapping("/user/signUp")
-    public ResponseEntity<String> signUp(@RequestBody PatientSignUpRequest patientSignUpRequest) {
+    @ResponseBody
+    public String signUp(@RequestBody PatientSignUpRequest patientSignUpRequest) {
 
 
         List<Patient> patientList = patientRepository.findByIdNumber(patientSignUpRequest.getIdNumber());
         if (!patientList.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("user already exist!");
+            return "user already exist!";
         }
 
         String encodedPassword = DigestUtils.sha256Hex(patientSignUpRequest.getPassword());
@@ -55,10 +57,11 @@ public class ClientController {
         patient.setEmail(patientSignUpRequest.getEmail());
 
         patientRepository.save(patient);
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+        return "ok";
     }
 
     @PostMapping("/user/login")
+    @ResponseBody
     public PatientLoginReply login(@RequestBody PatientLoginRequest patientLoginRequest) {
 
         List<Patient> patients = patientRepository.findByIdNumber(patientLoginRequest.getUserIdNumber());
@@ -80,7 +83,12 @@ public class ClientController {
         List<PatientToProtocol> patientsToProtocols = patientToProtocolRepository.findByPatientUuidAndEndDate(
                 patient.getUuid(), null);
 
-        patientLoginReply.setCurrentProtocolId(patientsToProtocols.get(0).getProtocol().getId());
+        if (!patientsToProtocols.isEmpty()) {
+            patientLoginReply.setCurrentProtocolId(patientsToProtocols.get(0).getProtocol().getId());
+        } else {
+            patientLoginReply.setCurrentProtocolId(-1);
+        }
+
         patientLoginReply.setPatientUuid(patient.getUuid());
 
         return patientLoginReply;
