@@ -59,16 +59,13 @@ public class DBInserter {
     }
 
     private ExerciseRecord mapExerciseApiToDB(ExerciseRecordRequest exerciseRecordRequest) {
-        Exercise exercise = exerciseRepository.findById(exerciseRecordRequest.getExerciseId()).get();
 
         ExerciseRecord mappedExerciseRecord = new ExerciseRecord();
-
-        mappedExerciseRecord.setExercise(exercise);
-        mappedExerciseRecord.setPatient(patientRepository.findByUuid(exerciseRecordRequest.getUserUuid()));
-
+        mappedExerciseRecord.setExerciseId(exerciseRecordRequest.getExerciseId());
+        mappedExerciseRecord.setPatientUuid(exerciseRecordRequest.getUserUuid());
         mappedExerciseRecord.setStartOfExercise(Utils.convertStringToDate(exerciseRecordRequest.getStartDateOfExercise()));
         mappedExerciseRecord.setEndOfExercise(Utils.convertStringToDate(exerciseRecordRequest.getEndDateOfExercise()));
-        mappedExerciseRecord.setExtraData(exerciseRecordRequest.getExerciseData());
+        mappedExerciseRecord.setExerciseData(exerciseRecordRequest.getExerciseData());
         return mappedExerciseRecord;
     }
 

@@ -14,15 +14,13 @@ public class ExerciseRecord {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     @Column(name = "id")
-    private long id;
+    private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "exercise_id" ,insertable = false,updatable = false)
-    private Exercise exercise;
+    @Column(name = "exercise_id")
+    private Long exerciseId;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "patient_uuid" ,insertable = false,updatable = false)
-    private Patient patient;
+    @Column(name = "patient_uuid")
+    private String patientUuid;
 
     @Column(name = "start_of_exercise")
     private Date startOfExercise;
@@ -31,7 +29,15 @@ public class ExerciseRecord {
     private Date endOfExercise;
 
     @Convert(converter = GsonJsonElementConverter.class)
-    @Column(name = "extra_data")
-    private JsonElement extraData;
+    @Column(name = "exercise_data")
+    private JsonElement exerciseData;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "exercise_id" ,insertable = false,updatable = false)
+    private Exercise exercise;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "patient_uuid" ,insertable = false,updatable = false)
+    private Patient patient;
 
 }
