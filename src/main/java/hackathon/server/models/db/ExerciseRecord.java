@@ -14,7 +14,7 @@ public class ExerciseRecord {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     @Column(name = "id")
-    private Long id;
+    private long id;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "exercise_id" ,insertable = false,updatable = false)
@@ -28,7 +28,7 @@ public class ExerciseRecord {
     private Date startOfExercise;
 
     @Column(name = "end_of_exercise")
-    private long endOfExercise;
+    private Date endOfExercise;
 
     @Convert(converter = GsonJsonElementConverter.class)
     @Column(name = "extra_data")

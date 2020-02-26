@@ -6,10 +6,7 @@ import hackathon.server.models.api.ExerciseRecordRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.xml.ws.Response;
 import java.util.List;
@@ -25,10 +22,10 @@ public class ClientController {
         this.DBInserter = DBInserter;
     }
 
-    @GetMapping("/exerciseRecords")
+    @PostMapping("/exerciseRecords")
     public ResponseEntity exerciseRecords(@RequestBody ExerciseRecordRequest exerciseRecord) {
         DBInserter.insertExerciseRecord(exerciseRecord);
-        DBInserter.insertExcelData(exerciseRecord.getExcelData());
+        //DBInserter.insertExcelData(exerciseRecord.getExcelData());
         return new ResponseEntity(HttpStatus.OK) ;
     }
 

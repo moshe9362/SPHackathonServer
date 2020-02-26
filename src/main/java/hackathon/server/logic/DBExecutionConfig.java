@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class DBInserterConfig {
+public class DBExecutionConfig {
 
     @Bean
     public DBInserter get() {
