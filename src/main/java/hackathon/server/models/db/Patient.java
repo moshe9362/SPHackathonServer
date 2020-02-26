@@ -17,7 +17,7 @@ public class Patient {
     private String uuid;
 
     @Column(name = "id_number")
-    private Long idNumber;
+    private String idNumber;
 
     @Column(name = "first_name")
     private String firstName;
