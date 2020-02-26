@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class DoctorController {
 
-    @PostMapping("/stab")
+    @PostMapping("/doctor/stab")
     public MockEntity stab() {
         return new MockEntity();
     }

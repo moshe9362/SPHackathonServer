@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class ClientController {
 
-    @PostMapping("/stab")
+    @PostMapping("/client/stab")
     public MockEntity stab() {
         return new MockEntity();
     }
