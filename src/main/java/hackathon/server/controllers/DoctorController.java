@@ -13,6 +13,7 @@ public class DoctorController {
 
     @GetMapping("/patient")
     public List<Integer> getAllPatients() {
+        //TODO add logic
         return new ArrayList<>();
     }
 
