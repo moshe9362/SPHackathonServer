@@ -13,6 +13,8 @@ public interface PatientRepository extends CrudRepository<Patient, String> {
 
     Patient findByUuid(String uuid);
 
+    List<Patient> findByIdNumber(String idNumber);
+
     @Query("select patient.uuid from patient patient")
     List<String> getAllPatientUuids();
 

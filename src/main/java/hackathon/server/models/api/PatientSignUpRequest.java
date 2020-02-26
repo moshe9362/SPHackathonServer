@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 public class PatientSignUpRequest {
-    private long idNumber;
+    private String idNumber;
     private String firstName;
     private String lastName;
     private String birthDate;
