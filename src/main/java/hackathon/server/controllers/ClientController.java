@@ -67,13 +67,19 @@ public class ClientController {
         }
 
         String encodedPassword = DigestUtils.sha256Hex(patientSignUpRequest.getPassword());
-        Instant birthDayInstant = Instant.parse(patientSignUpRequest.getBirthDate());
+        if (patientSignUpRequest.getBirthDate() != null) {
+            Instant birthDayInstant = Instant.parse(patientSignUpRequest.getBirthDate());
+        }
         Patient patient = new Patient();
         patient.setUuid(UUID.randomUUID().toString());
         patient.setIdNumber(patientSignUpRequest.getIdNumber());
         patient.setFirstName(patientSignUpRequest.getFirstName());
         patient.setLastName(patientSignUpRequest.getLastName());
-        patient.setBirthDate(new Date(birthDayInstant.toEpochMilli()));
+        if (patientSignUpRequest.getBirthDate() != null) {
+            Instant birthDayInstant = Instant.parse(patientSignUpRequest.getBirthDate());
+            patient.setBirthDate(new Date(birthDayInstant.toEpochMilli()));
+        }
+
         patient.setGender(patientSignUpRequest.getGender().getValue());
         patient.setPassword(encodedPassword);
         patient.setPhone(patientSignUpRequest.getPhoneNumber());
