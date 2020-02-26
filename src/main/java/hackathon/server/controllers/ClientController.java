@@ -39,7 +39,7 @@ public class ClientController {
 
     @Autowired
     public ClientController(DBInserter DBInserter,
-                            (PatientRepository patientRepository,
+                            PatientRepository patientRepository,
                             PatientToProtocolRepository patientToProtocolRepository) {
         this.DBInserter = DBInserter;
         this.patientRepository = patientRepository;

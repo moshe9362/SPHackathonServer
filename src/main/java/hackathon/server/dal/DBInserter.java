@@ -10,15 +10,11 @@ import hackathon.server.models.api.ExerciseRecordRequest;
 import hackathon.server.models.db.ExcelData;
 import hackathon.server.models.db.Exercise;
 import hackathon.server.models.db.ExerciseRecord;
-import hackathon.server.models.db.Patient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -63,19 +59,13 @@ public class DBInserter {
     }
 
     private ExerciseRecord mapExerciseApiToDB(ExerciseRecordRequest exerciseRecordRequest) {
-        //Exercise exercise = exerciseRepository.findById(exerciseRecordRequest.getExerciseId()).get();
+        Exercise exercise = exerciseRepository.findById(exerciseRecordRequest.getExerciseId()).get();
 
-
-        Exercise exercise = new Exercise();
-        exercise.setId(exerciseRecordRequest.getExerciseId());
         ExerciseRecord mappedExerciseRecord = new ExerciseRecord();
 
-
         mappedExerciseRecord.setExercise(exercise);
-        //mappedExerciseRecord.setPatient(patientRepository.findByUuid(exerciseRecordRequest.getUserUuid()));
+        mappedExerciseRecord.setPatient(patientRepository.findByUuid(exerciseRecordRequest.getUserUuid()));
 
-        Patient p = new Patient();
-        p.setUuid(exerciseRecordRequest.getUserUuid());
         mappedExerciseRecord.setStartOfExercise(Utils.convertStringToDate(exerciseRecordRequest.getStartDateOfExercise()));
         mappedExerciseRecord.setEndOfExercise(Utils.convertStringToDate(exerciseRecordRequest.getEndDateOfExercise()));
         mappedExerciseRecord.setExtraData(exerciseRecordRequest.getExerciseData());
