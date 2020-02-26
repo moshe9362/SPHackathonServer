@@ -1,15 +1,15 @@
 package hackathon.server.models.api;
 
 import com.google.gson.JsonElement;
-import lombok.Value;
+import lombok.Data;
 
-@Value
+@Data
 public class ExerciseDataReply {
-    long exerciseId;
-    String exerciseName;
-    long exerciseTypeId;
-    String exerciseTypeName;
-    int startDayInProtocol;
-    int endDayInProtocol;
-    JsonElement properties;
+    private long exerciseId;
+    private String exerciseName;
+    private long exerciseTypeId;
+    private String exerciseTypeName;
+    private int startDayInProtocol;
+    private int endDayInProtocol;
+    private JsonElement properties;
 }

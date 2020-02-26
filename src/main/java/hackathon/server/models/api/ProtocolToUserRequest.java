@@ -3,7 +3,8 @@ package hackathon.server.models.api;
 import lombok.Data;
 
 @Data
-public class ProtocolShortDataReply {
+public class ProtocolToUserRequest {
+    private String userUuid;
     private Long protocolId;
-    private String protocolName;
+    private String startDate;
 }

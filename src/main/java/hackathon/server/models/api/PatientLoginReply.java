@@ -1,9 +1,9 @@
 package hackathon.server.models.api;
 
-import lombok.Value;
+import lombok.Data;
 
-@Value
+@Data
 public class PatientLoginReply {
-    String PatientUuid;
-    long currentProtocolId;
+    private String PatientUuid;
+    private long currentProtocolId;
 }

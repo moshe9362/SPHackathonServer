@@ -1,10 +1,11 @@
 package hackathon.server.models.api;
 
-import lombok.Value;
+import lombok.Data;
+import java.util.List;
 
-@Value
+@Data
 public class ProtocolDataReply {
-    long protocolId;
-    String protocolName;
-    ExerciseDataReply[] exercises;
+    private long protocolId;
+    private String protocolName;
+    private List<ExerciseDataReply> exercises;
 }

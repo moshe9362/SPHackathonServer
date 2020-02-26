@@ -1,6 +1,9 @@
 package hackathon.server.models.api;
 
+import lombok.Data;
+
+@Data
 public class ExcelDataRequest {
-    String timeStamp;
-    float angle;
+    private String timeStamp;
+    private float angle;
 }
