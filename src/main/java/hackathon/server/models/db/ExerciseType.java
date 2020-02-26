@@ -7,19 +7,19 @@ import lombok.Data;
 import javax.persistence.*;
 
 @Data
-@Entity
+@Entity(name = "exercise_type")
 public class ExerciseType {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     @Column(name = "id")
-    private long id;
+    private Long id;
 
     @Column(name = "name")
     private String name;
 
     @Convert(converter = GsonJsonElementConverter.class)
-    @Column(name = "propertiesSchema")
+    @Column(name = "properties_schema")
     private JsonElement propertiesSchema;
 
 }
