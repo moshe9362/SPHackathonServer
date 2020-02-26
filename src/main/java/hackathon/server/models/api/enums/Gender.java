@@ -1,4 +1,4 @@
-package hackathon.server.models.api;
+package hackathon.server.models.api.enums;
 
 public enum Gender {
     OTHER(0) ,MALE(1), FEMALE(2);

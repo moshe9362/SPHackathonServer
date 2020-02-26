@@ -2,6 +2,7 @@ package hackathon.server.controllers;
 
 import hackathon.server.dal.crud.PatientRepository;
 import hackathon.server.models.MockEntity;
+import hackathon.server.models.api.PatientSignUpRequest;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,11 +22,14 @@ public class ClientController {
 
     @PostMapping("/user/signUp")
     public ResponseEntity signUp(@RequestParam("id") String id,
-                             @RequestParam("firstName") String FirstName,
-                             @RequestParam("lastName") String lastName,
-                             @RequestParam("birthDate") String birthDate,
-                             @RequestParam("gender") int gender,
-                             @RequestParam("password") String password) {
+                                 @RequestParam("firstName") String FirstName,
+                                 @RequestParam("lastName") String lastName,
+                                 @RequestParam("birthDate") String birthDate,
+                                 @RequestParam("gender") int gender,
+                                 @RequestParam("password") String password,
+                                 @RequestParam("email") String email,
+                                 @RequestParam("phoneNumber") String phoneNumber) {
+        PatientSignUpRequest patientSignUpRequest = new PatientSignUpRequest();
         String encodedPassword = DigestUtils.sha256Hex(password);
 
         if (true) {

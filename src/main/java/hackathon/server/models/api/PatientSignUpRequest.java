@@ -1,5 +1,6 @@
 package hackathon.server.models.api;
 
+import hackathon.server.models.api.enums.Gender;
 import lombok.Data;
 
 @Data
