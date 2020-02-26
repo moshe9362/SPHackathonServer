@@ -9,21 +9,27 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import hackathon.server.dal.crud.PatientRepository;
 import hackathon.server.dal.crud.PatientToProtocolRepository;
+import hackathon.server.dal.crud.ProtocolRepository;
 import hackathon.server.models.api.PatientLoginReply;
 import hackathon.server.models.api.PatientLoginRequest;
 import hackathon.server.models.api.PatientSignUpRequest;
+import hackathon.server.models.api.ProtocolShortDataReply;
 import hackathon.server.models.db.Patient;
 import hackathon.server.models.db.PatientToProtocol;
+import hackathon.server.models.db.Protocol;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.sql.Date;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,25 +40,27 @@ import java.util.List;
 public class ClientController {
     private PatientRepository patientRepository;
     private PatientToProtocolRepository patientToProtocolRepository;
-
+    private ProtocolRepository protocolRepository;
     private DBInserter DBInserter;
 
-    @Autowired
     public ClientController(DBInserter DBInserter,
                             PatientRepository patientRepository,
-                            PatientToProtocolRepository patientToProtocolRepository) {
+                            PatientToProtocolRepository patientToProtocolRepository,
+                            ProtocolRepository protocolRepository) {
         this.DBInserter = DBInserter;
         this.patientRepository = patientRepository;
         this.patientToProtocolRepository = patientToProtocolRepository;
+        this.protocolRepository = protocolRepository;
     }
 
     @PostMapping("/user/signUp")
-    public ResponseEntity<String> signUp(@RequestBody PatientSignUpRequest patientSignUpRequest) {
+    @ResponseBody
+    public String signUp(@RequestBody PatientSignUpRequest patientSignUpRequest) {
 
 
         List<Patient> patientList = patientRepository.findByIdNumber(patientSignUpRequest.getIdNumber());
         if (!patientList.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("user already exist!");
+            throw new RuntimeException("user already exist");
         }
 
         String encodedPassword = DigestUtils.sha256Hex(patientSignUpRequest.getPassword());
@@ -69,10 +77,11 @@ public class ClientController {
         patient.setEmail(patientSignUpRequest.getEmail());
 
         patientRepository.save(patient);
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+        return "ok";
     }
 
     @PostMapping("/user/login")
+    @ResponseBody
     public PatientLoginReply login(@RequestBody PatientLoginRequest patientLoginRequest) {
 
         List<Patient> patients = patientRepository.findByIdNumber(patientLoginRequest.getUserIdNumber());
@@ -94,11 +103,31 @@ public class ClientController {
         List<PatientToProtocol> patientsToProtocols = patientToProtocolRepository.findByPatientUuidAndEndDate(
                 patient.getUuid(), null);
 
-        patientLoginReply.setCurrentProtocolId(patientsToProtocols.get(0).getProtocol().getId());
+        if (!patientsToProtocols.isEmpty()) {
+            patientLoginReply.setCurrentProtocolId(patientsToProtocols.get(0).getProtocol().getId());
+        } else {
+            patientLoginReply.setCurrentProtocolId(-1);
+        }
+
         patientLoginReply.setPatientUuid(patient.getUuid());
 
         return patientLoginReply;
     }
+
+    @GetMapping("/protocols")
+    @ResponseBody
+    public List<ProtocolShortDataReply> getProtocols() {
+        List<Protocol> protocols =  protocolRepository.findAll();
+        List<ProtocolShortDataReply> protocolShortDataReplies = new ArrayList<>();
+        for (Protocol protocol : protocols) {
+            ProtocolShortDataReply protocolShortDataReply = new ProtocolShortDataReply();
+            protocolShortDataReply.setProtocolId(protocol.getId());
+            protocolShortDataReply.setProtocolName(protocol.getName());
+        }
+
+        return protocolShortDataReplies;
+    }
+
 
 
     @PostMapping("/exerciseRecords")
