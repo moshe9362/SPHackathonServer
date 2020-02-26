@@ -5,29 +5,34 @@ import hackathon.server.dal.convertors.GsonJsonElementConverter;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
-@Entity
+@Entity(name = "exercise")
 public class Exercise {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
-    private long id;
+    private Long id;
 
     @Column(name = "name")
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    @JoinColumn(name = "id",insertable = false,updatable = false)
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "type_id" ,insertable = false,updatable = false)
     private ExerciseType exerciseType;
 
-    @Column(name = "startDayInProtocol")
+    @Column(name = "start_day_in_protocol")
     private Integer startDayInProtocol;
 
-    @Column(name = "endDayInProtocol")
+    @Column(name = "end_day_in_protocol")
     private Integer endDayInProtocol;
 
     @Convert(converter = GsonJsonElementConverter.class)
+    @Column(name = "properties")
     private JsonElement properties;
+
+    @OneToMany(targetEntity = ExcelData.class, mappedBy = "id",cascade = CascadeType.ALL)
+    private List<ExcelData> excelDatas;
 
 }

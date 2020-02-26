@@ -5,18 +5,18 @@ import lombok.Data;
 import javax.persistence.*;
 
 @Data
-@Entity
+@Entity(name = "protocol")
 public class Protocol {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     @Column(name = "id")
-    private long id;
+    private Long id;
 
     @Column(name = "name")
     private String name;
 
-    @Column(name = "isTemplate")
+    @Column(name = "is_template")
     private Boolean isTemplate;
 
 }
