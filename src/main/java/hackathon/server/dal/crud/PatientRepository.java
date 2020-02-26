@@ -4,6 +4,7 @@ package hackathon.server.dal.crud;
 import hackathon.server.models.db.Patient;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.lang.NonNullApi;
 
 import java.util.List;
 
@@ -20,6 +21,6 @@ public interface PatientRepository extends CrudRepository<Patient, String> {
     List<String> getAllProtocolName();
 
     @Query("select protocol.id from Protocol protocol")
-    List<String> getAllProtocolId();
+    List<Long> getAllProtocolId();
 
 }
