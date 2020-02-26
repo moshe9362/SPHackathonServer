@@ -14,11 +14,11 @@ public class PatientToProtocol {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "patient_uuid" ,insertable = false,updatable = false)
-    private Patient patient;
+    private String patientUuid;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "protocol_id" ,insertable = false,updatable = false)
-    private Protocol protocol;
+    private Long protocolId;
 
     @Column(name = "start_date")
     private Date startDate;

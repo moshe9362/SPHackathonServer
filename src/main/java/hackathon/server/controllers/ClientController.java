@@ -2,11 +2,14 @@ package hackathon.server.controllers;
 
 import hackathon.server.dal.crud.PatientRepository;
 import hackathon.server.dal.crud.PatientToProtocolRepository;
+import hackathon.server.dal.crud.ProtocolRepository;
 import hackathon.server.models.api.PatientLoginReply;
 import hackathon.server.models.api.PatientLoginRequest;
 import hackathon.server.models.api.PatientSignUpRequest;
+import hackathon.server.models.api.ProtocolToUserRequest;
 import hackathon.server.models.db.Patient;
 import hackathon.server.models.db.PatientToProtocol;
+import hackathon.server.models.db.Protocol;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,7 +21,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.sql.Date;
 import java.time.Instant;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Controller
@@ -84,7 +89,7 @@ public class ClientController {
                 patient.getUuid(), null);
 
         if (!patientsToProtocols.isEmpty()) {
-            patientLoginReply.setCurrentProtocolId(patientsToProtocols.get(0).getProtocol().getId());
+            patientLoginReply.setCurrentProtocolId(patientsToProtocols.get(0).getProtocolId());
         } else {
             patientLoginReply.setCurrentProtocolId(-1);
         }
@@ -92,6 +97,26 @@ public class ClientController {
         patientLoginReply.setPatientUuid(patient.getUuid());
 
         return patientLoginReply;
+    }
+
+    @PostMapping("/user/addProtocolToUser")
+    @ResponseBody
+    public String addProtocolToUser(@RequestBody ProtocolToUserRequest protocolToUserRequest) {
+        List<PatientToProtocol> patientsWithOpenProtocols = patientToProtocolRepository.findByPatientUuidAndEndDate(protocolToUserRequest.getUserUuid(), null);
+        for(PatientToProtocol patientToProtocol: patientsWithOpenProtocols) {
+            patientToProtocol.setEndDate(new Date(Instant.now().toEpochMilli()));
+            patientToProtocolRepository.save(patientToProtocol);
+        }
+
+        PatientToProtocol patientToProtocol = new PatientToProtocol();
+
+        patientToProtocol.setPatientUuid(protocolToUserRequest.getUserUuid());
+        patientToProtocol.setProtocolId(protocolToUserRequest.getProtocolId());
+        patientToProtocol.setStartDate(new Date(Instant.parse(protocolToUserRequest.getStartDate()).toEpochMilli()));
+        patientToProtocol.setEndDate(null);
+
+        patientToProtocolRepository.save(patientToProtocol);
+        return "ok";
     }
 
 
