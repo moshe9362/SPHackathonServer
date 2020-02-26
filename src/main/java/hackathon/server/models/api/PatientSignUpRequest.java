@@ -16,8 +16,8 @@ public class PatientSignUpRequest {
     private String firstName;
     @NotBlank(message = "Last name is mandatory")
     private String lastName;
-    @NotBlank(message = "Birth date is mandatory")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    //@NotBlank(message = "Birth date is mandatory")
+    //@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private String birthDate;
     @NotBlank(message = "Gender is mandatory")
     private Gender gender;
