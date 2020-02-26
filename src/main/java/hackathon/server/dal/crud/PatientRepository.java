@@ -16,4 +16,10 @@ public interface PatientRepository extends CrudRepository<Patient, String> {
     @Query("select patient.uuid from Patient patient")
     List<String> getAllPatientUuids();
 
+    @Query("select protocol.name from Protocol protocol")
+    List<String> getAllProtocolName();
+
+    @Query("select protocol.id from Protocol protocol")
+    List<String> getAllProtocolId();
+
 }
