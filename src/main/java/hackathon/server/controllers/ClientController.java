@@ -1,20 +1,26 @@
 package hackathon.server.controllers;
 
+import hackathon.server.dal.crud.PatientRepository;
 import hackathon.server.models.MockEntity;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
 @Controller
 public class ClientController {
+    private PatientRepository patientRepository;
+
+    @Autowired
+    public ClientController(PatientRepository patientRepository) {
+        this.patientRepository = patientRepository;
+    }
 
     @PostMapping("/user/signUp")
-    public MockEntity signUp(@RequestParam("id") String id,
+    public ResponseEntity signUp(@RequestParam("id") String id,
                              @RequestParam("firstName") String FirstName,
                              @RequestParam("lastName") String lastName,
                              @RequestParam("birthDate") String birthDate,
@@ -22,9 +28,14 @@ public class ClientController {
                              @RequestParam("password") String password) {
         String encodedPassword = DigestUtils.sha256Hex(password);
 
+        if (true) {
+            // TODO is exist)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
 
 
-        return new MockEntity();
+
+        return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
     @PostMapping("/user/login")
