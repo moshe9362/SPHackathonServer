@@ -12,12 +12,10 @@ public class PatientToProtocol {
     @EmbeddedId
     private PatientToProtocolPK id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "patient_uuid" ,insertable = false,updatable = false)
+    @Column(name = "patient_uuid" ,insertable = false,updatable = false)
     private String patientUuid;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "protocol_id" ,insertable = false,updatable = false)
+    @Column(name = "protocol_id" ,insertable = false,updatable = false)
     private Long protocolId;
 
     @Column(name = "start_date")
