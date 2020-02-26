@@ -40,7 +40,7 @@ public class ClientController {
 
         List<Patient> patientList = patientRepository.findByIdNumber(patientSignUpRequest.getIdNumber());
         if (!patientList.isEmpty()) {
-            return "user already exist!";
+            throw new RuntimeException("user already exist");
         }
 
         String encodedPassword = DigestUtils.sha256Hex(patientSignUpRequest.getPassword());
