@@ -59,21 +59,21 @@ public class ClientController {
     }
 
     @PostMapping("/user/login")
-    public PatientLoginReply login(@RequestBody PatientLoginRequest patientLoginRequest) throws Exception {
+    public PatientLoginReply login(@RequestBody PatientLoginRequest patientLoginRequest) {
 
         List<Patient> patients = patientRepository.findByIdNumber(patientLoginRequest.getUserIdNumber());
         if (patients.size() > 1) {
-            throw new Exception("Initial server error, there is more then one user with this id. Contact the support");
+            throw new RuntimeException("Initial server error, there is more then one user with this id. Contact the support");
         }
 
         if (patients.size() == 0) {
-            throw new Exception("User does not exist");
+            throw new RuntimeException("User does not exist");
         }
 
         Patient patient = patients.get(0);
         String encodedPassword = DigestUtils.sha256Hex(patientLoginRequest.getPassword());
         if (!encodedPassword.equals(patient.getPassword())) {
-            throw new Exception("Password is incorrect");
+            throw new RuntimeException("Password is incorrect");
         }
 
         PatientLoginReply patientLoginReply = new PatientLoginReply();
