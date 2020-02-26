@@ -2,22 +2,27 @@ package hackathon.server.controllers;
 
 import hackathon.server.dal.crud.PatientRepository;
 import hackathon.server.dal.crud.PatientToProtocolRepository;
+import hackathon.server.dal.crud.ProtocolRepository;
 import hackathon.server.models.api.PatientLoginReply;
 import hackathon.server.models.api.PatientLoginRequest;
 import hackathon.server.models.api.PatientSignUpRequest;
+import hackathon.server.models.api.ProtocolShortDataReply;
 import hackathon.server.models.db.Patient;
 import hackathon.server.models.db.PatientToProtocol;
+import hackathon.server.models.db.Protocol;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.sql.Date;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,12 +30,15 @@ import java.util.UUID;
 public class ClientController {
     private PatientRepository patientRepository;
     private PatientToProtocolRepository patientToProtocolRepository;
+    private ProtocolRepository protocolRepository;
 
     @Autowired
     public ClientController(PatientRepository patientRepository,
-                            PatientToProtocolRepository patientToProtocolRepository) {
+                            PatientToProtocolRepository patientToProtocolRepository,
+                            ProtocolRepository protocolRepository) {
         this.patientRepository = patientRepository;
         this.patientToProtocolRepository = patientToProtocolRepository;
+        this.protocolRepository = protocolRepository;
     }
 
     @PostMapping("/user/signUp")
@@ -93,6 +101,21 @@ public class ClientController {
 
         return patientLoginReply;
     }
+
+    @GetMapping("/protocols")
+    @ResponseBody
+    public List<ProtocolShortDataReply> getProtocols() {
+        List<Protocol> protocols =  protocolRepository.findAll();
+        List<ProtocolShortDataReply> protocolShortDataReplies = new ArrayList<>();
+        for (Protocol protocol : protocols) {
+            ProtocolShortDataReply protocolShortDataReply = new ProtocolShortDataReply();
+            protocolShortDataReply.setProtocolId(protocol.getId());
+            protocolShortDataReply.setProtocolName(protocol.getName());
+        }
+
+        return protocolShortDataReplies;
+    }
+
 
 
 }
