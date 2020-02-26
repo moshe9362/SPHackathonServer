@@ -24,9 +24,6 @@ public class DBTestController {
         this.exerciseRepository = exerciseRepository;
     }
 
-
-
-
     @GetMapping("/shaq/create/patient")
     @ResponseBody
     public String createPatient() {
