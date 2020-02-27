@@ -9,7 +9,7 @@ import java.time.Instant;
 public class Utils {
 
     public static Timestamp convertStringToTimeStamp(String date) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy'T'hh:mm:ss.SSS");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy'T'hh:mm:ss");
         java.util.Date parsedDate = null;
         try {
             parsedDate = dateFormat.parse(date);
