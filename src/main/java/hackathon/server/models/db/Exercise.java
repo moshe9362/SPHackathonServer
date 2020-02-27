@@ -28,6 +28,9 @@ public class Exercise {
     @Column(name = "end_day_in_protocol")
     private Integer endDayInProtocol;
 
+    @Column(name = "protocol_id")
+    private Long protocolId;
+
     @Convert(converter = GsonJsonElementConverter.class)
     @Column(name = "properties")
     private JsonElement properties;

@@ -12,6 +12,6 @@ import java.util.Optional;
 public interface ExerciseRepository extends CrudRepository<Exercise, Long> {
 
     List<Exercise> findAll();
-
+    List<Exercise> findByProtocolId(Long protocolId);
     Optional<Exercise> findById(Long id);
 }
