@@ -14,5 +14,5 @@ public interface PatientToProtocolRepository extends CrudRepository<PatientToPro
 
     List<PatientToProtocol> findAll();
 
-    List<PatientToProtocol> findByPatientUuidAndEndDate(String patiendUuid, Date endDate);
+    List<PatientToProtocol> findByPatientUuidAndEndDate(String patientUuid, Date endDate);
 }
