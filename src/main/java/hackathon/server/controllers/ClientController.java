@@ -2,6 +2,7 @@ package hackathon.server.controllers;
 
 import com.google.gson.JsonElement;
 import hackathon.server.dal.DBInserter;
+
 import hackathon.server.dal.crud.ExerciseRepository;
 import hackathon.server.models.api.*;
 import hackathon.server.models.db.Exercise;
@@ -12,13 +13,19 @@ import org.springframework.web.bind.annotation.*;
 import hackathon.server.dal.crud.PatientRepository;
 import hackathon.server.dal.crud.PatientToProtocolRepository;
 import hackathon.server.dal.crud.ProtocolRepository;
+
+import hackathon.server.dal.crud.PatientRepository;
+import hackathon.server.dal.crud.PatientToProtocolRepository;
+import hackathon.server.dal.crud.ProtocolRepository;
+import hackathon.server.models.api.*;
+
 import hackathon.server.models.db.Patient;
 import hackathon.server.models.db.PatientToProtocol;
 import hackathon.server.models.db.Protocol;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,14 +33,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.w3c.dom.ls.LSException;
 
+import org.springframework.web.bind.annotation.*;
+
+
 import java.sql.Date;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import javax.xml.ws.Response;
-import java.util.List;
 
 @RestController
 public class ClientController {
@@ -66,13 +73,19 @@ public class ClientController {
         }
 
         String encodedPassword = DigestUtils.sha256Hex(patientSignUpRequest.getPassword());
-        Instant birthDayInstant = Instant.parse(patientSignUpRequest.getBirthDate());
+        if (patientSignUpRequest.getBirthDate() != null) {
+            Instant birthDayInstant = Instant.parse(patientSignUpRequest.getBirthDate());
+        }
         Patient patient = new Patient();
         patient.setUuid(UUID.randomUUID().toString());
         patient.setIdNumber(patientSignUpRequest.getIdNumber());
         patient.setFirstName(patientSignUpRequest.getFirstName());
         patient.setLastName(patientSignUpRequest.getLastName());
-        patient.setBirthDate(new Date(birthDayInstant.toEpochMilli()));
+        if (patientSignUpRequest.getBirthDate() != null) {
+            Instant birthDayInstant = Instant.parse(patientSignUpRequest.getBirthDate());
+            patient.setBirthDate(new Date(birthDayInstant.toEpochMilli()));
+        }
+
         patient.setGender(patientSignUpRequest.getGender().getValue());
         patient.setPassword(encodedPassword);
         patient.setPhone(patientSignUpRequest.getPhoneNumber());
@@ -106,7 +119,7 @@ public class ClientController {
                 patient.getUuid(), null);
 
         if (!patientsToProtocols.isEmpty()) {
-            patientLoginReply.setCurrentProtocolId(patientsToProtocols.get(0).getProtocol().getId());
+            patientLoginReply.setCurrentProtocolId(patientsToProtocols.get(0).getProtocolId());
         } else {
             patientLoginReply.setCurrentProtocolId(-1);
         }
@@ -116,6 +129,26 @@ public class ClientController {
         return patientLoginReply;
     }
 
+    @PostMapping("/user/addProtocolToUser")
+    @ResponseBody
+    public String addProtocolToUser(@RequestBody ProtocolToUserRequest protocolToUserRequest) {
+        List<PatientToProtocol> patientsWithOpenProtocols = patientToProtocolRepository.findByPatientUuidAndEndDate(protocolToUserRequest.getUserUuid(), null);
+        for(PatientToProtocol patientToProtocol: patientsWithOpenProtocols) {
+            patientToProtocol.setEndDate(new Date(Instant.now().toEpochMilli()));
+            patientToProtocolRepository.save(patientToProtocol);
+        }
+
+        PatientToProtocol patientToProtocol = new PatientToProtocol();
+
+        patientToProtocol.setPatientUuid(protocolToUserRequest.getUserUuid());
+        patientToProtocol.setProtocolId(protocolToUserRequest.getProtocolId());
+        patientToProtocol.setStartDate(new Date(Instant.parse(protocolToUserRequest.getStartDate()).toEpochMilli()));
+        patientToProtocol.setEndDate(null);
+
+        patientToProtocolRepository.save(patientToProtocol);
+        return "ok";
+    }
+  
     @GetMapping("/protocols")
     @ResponseBody
     public List<ProtocolShortDataReply> getProtocols() {
@@ -129,8 +162,6 @@ public class ClientController {
 
         return protocolShortDataReplies;
     }
-
-
 
     @PostMapping("/exerciseRecords")
     public ResponseEntity exerciseRecords(@RequestBody ExerciseRecordRequest exerciseRecord) {
