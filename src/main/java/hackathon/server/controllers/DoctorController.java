@@ -34,21 +34,18 @@ public class DoctorController {
     private PatientRepository patientRepository;
     private ExerciseRepository exerciseRepository;
     private ExerciseRecordRepository exerciseRecordRepository;
+    private ExcelDataRepository excelDataRepository;
 
     @Autowired
     public DoctorController(PatientRepository patientRepository,
                             ExerciseRepository exerciseRepository,
-                            ExerciseRecordRepository exerciseRecordRepository) {
+                            ExerciseRecordRepository exerciseRecordRepository,
+                            ExcelDataRepository excelDataRepository) {
         this.patientRepository = patientRepository;
         this.exerciseRepository = exerciseRepository;
         this.exerciseRecordRepository = exerciseRecordRepository;
+        this.excelDataRepository = excelDataRepository;
     }
-
-    @Autowired
-    ExerciseRecordRepository exerciseRecordRepository;
-
-    @Autowired
-    ExcelDataRepository excelDataRepository;
 
     @GetMapping("/patients")
     @ResponseBody
@@ -95,11 +92,16 @@ public class DoctorController {
             patientExerciseRecordReply.setExerciseData(r.getExerciseData());
 
             patientExerciseRecordReply.setId(r.getId());
-          
+        }
+
+        return patientExerciseRecordReplies;
+    }
+
+
     @GetMapping("/exercisePatientExcelData/{uuid}")
     @ResponseBody
     public ArrayList<PatientExercisesExcelDataReply> getAllPatientExercisesExcelData(@PathVariable("uuid") String patientUuid) {
-        List<ExerciseRecord>  patientExerciseRecords = exerciseRecordRepository.findAllByPatientUuid(patientUuid);
+        List<ExerciseRecord> patientExerciseRecords = exerciseRecordRepository.findByPatientUuid(patientUuid);
         ArrayList<PatientExercisesExcelDataReply> reply = new ArrayList<>();
         for (ExerciseRecord exerciseRecord: patientExerciseRecords) {
             reply.addAll(getExerciseExcelData(exerciseRecord));
@@ -118,23 +120,16 @@ public class DoctorController {
 
     private PatientExercisesExcelDataReply createPatientExercisesExcelDataReply(ExcelData excelDataEntry, ExerciseRecord exerciseRecord) {
         PatientExercisesExcelDataReply patientExercisesExcelDataReply = new PatientExercisesExcelDataReply();
+        Exercise exercise = exerciseRepository.findById(exerciseRecord.getExerciseId()).get();
         patientExercisesExcelDataReply.setExerciseRecordId(exerciseRecord.getId());
         patientExercisesExcelDataReply.setExerciseId(exerciseRecord.getExerciseId());
-        patientExercisesExcelDataReply.setExerciseName(exerciseRecord.getExercise().getName());
+        patientExercisesExcelDataReply.setExerciseName(exercise.getName());
         patientExercisesExcelDataReply.setAngle(excelDataEntry.getAngle());
         patientExercisesExcelDataReply.setTimeStamp(new Date(excelDataEntry.getTimestamp().getTime()));
-        patientExercisesExcelDataReply.setExerciseTypeId(exerciseRecord.getExercise().getExerciseType().getId());
-        patientExercisesExcelDataReply.setExerciseTypeName(exerciseRecord.getExercise().getExerciseType().getName());
+        patientExercisesExcelDataReply.setExerciseTypeId(exercise.getExerciseType().getId());
+        patientExercisesExcelDataReply.setExerciseTypeName(exercise.getExerciseType().getName());
 
         return patientExercisesExcelDataReply;
-    }
-
-
-            patientExerciseRecordReply.setStartDateTimeOfExercise(r.getStartOfExercise().toString());
-            patientExerciseRecordReplies.add(patientExerciseRecordReply);
-        }
-
-        return patientExerciseRecordReplies;
     }
 
 }
