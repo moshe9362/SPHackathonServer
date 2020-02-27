@@ -1,32 +1,28 @@
 package hackathon.server.controllers;
 
+import hackathon.server.dal.crud.ExcelDataRepository;
 import hackathon.server.dal.crud.ExerciseRecordRepository;
 import hackathon.server.dal.crud.ExerciseRepository;
+import hackathon.server.dal.crud.PatientRepository;
 import hackathon.server.models.api.PatientExerciseRecordReply;
+import hackathon.server.models.api.PatientExercisesExcelDataReply;
+import hackathon.server.models.api.PatientReply;
+import hackathon.server.models.api.enums.Gender;
+import hackathon.server.models.db.ExcelData;
 import hackathon.server.models.db.Exercise;
 import hackathon.server.models.db.ExerciseRecord;
+import hackathon.server.models.db.Patient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import hackathon.server.dal.crud.ExcelDataRepository;
-import hackathon.server.dal.crud.ExerciseRecordRepository;
-import hackathon.server.dal.crud.PatientRepository;
-import hackathon.server.models.api.PatientExercisesExcelDataReply;
-import hackathon.server.models.api.PatientReply;
-import hackathon.server.models.api.enums.Gender;
-import hackathon.server.models.db.ExcelData;
-import hackathon.server.models.db.ExerciseRecord;
-import hackathon.server.models.db.Patient;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Controller
 public class DoctorController {
@@ -80,18 +76,18 @@ public class DoctorController {
 
     private List<PatientExerciseRecordReply> map(List<ExerciseRecord> list) {
         List<PatientExerciseRecordReply> patientExerciseRecordReplies = new ArrayList<>();
-        for (ExerciseRecord r : list) {
+        for (ExerciseRecord exerciseRecord : list) {
             PatientExerciseRecordReply patientExerciseRecordReply = new PatientExerciseRecordReply();
-            Exercise exercise = exerciseRepository.findById(r.getExerciseId()).get();
+            Exercise exercise = exerciseRepository.findById(exerciseRecord.getExerciseId()).get();
             patientExerciseRecordReply.setExerciseId(exercise.getId());
             patientExerciseRecordReply.setExerciseName(exercise.getName());
             patientExerciseRecordReply.setExerciseTypeId(exercise.getExerciseType().getId());
             patientExerciseRecordReply.setExerciseTypeName(exercise.getExerciseType().getName());
 
-            patientExerciseRecordReply.setEndDateTimeOfExercise(r.getEndOfExercise().toString());
-            patientExerciseRecordReply.setExerciseData(r.getExerciseData());
+            patientExerciseRecordReply.setEndDateTimeOfExercise(exerciseRecord.getEndOfExercise().toString());
+            patientExerciseRecordReply.setExerciseData(exerciseRecord.getExerciseData());
 
-            patientExerciseRecordReply.setId(r.getId());
+            patientExerciseRecordReply.setId(exerciseRecord.getId());
         }
 
         return patientExerciseRecordReplies;

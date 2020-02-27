@@ -2,10 +2,10 @@ package hackathon.server.models.api;
 
 import hackathon.server.models.api.enums.Gender;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Data
@@ -23,6 +23,7 @@ public class PatientSignUpRequest {
     private Gender gender;
     @Email(message = "Email must be a valid email address")
     private String email;
+    @Pattern(regexp="(^$|[0-9]{10})")
     private String phoneNumber;
     @NotBlank(message = "Password is mandatory")
     @Size(min=8, max=16, message="Password must be equal to or greater than 8 characters and less than 16 characters")

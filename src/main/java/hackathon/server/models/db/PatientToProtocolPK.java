@@ -3,7 +3,6 @@ package hackathon.server.models.db;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
-import java.sql.Date;
 
 @Embeddable
 public class PatientToProtocolPK implements Serializable {

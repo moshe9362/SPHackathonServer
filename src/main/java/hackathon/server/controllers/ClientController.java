@@ -1,40 +1,19 @@
 package hackathon.server.controllers;
 
-import com.google.gson.JsonElement;
 import hackathon.server.dal.DBInserter;
-
 import hackathon.server.dal.crud.ExerciseRepository;
+import hackathon.server.dal.crud.PatientRepository;
+import hackathon.server.dal.crud.PatientToProtocolRepository;
+import hackathon.server.dal.crud.ProtocolRepository;
 import hackathon.server.models.api.*;
 import hackathon.server.models.db.Exercise;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import hackathon.server.dal.crud.PatientRepository;
-import hackathon.server.dal.crud.PatientToProtocolRepository;
-import hackathon.server.dal.crud.ProtocolRepository;
-
-import hackathon.server.dal.crud.PatientRepository;
-import hackathon.server.dal.crud.PatientToProtocolRepository;
-import hackathon.server.dal.crud.ProtocolRepository;
-import hackathon.server.models.api.*;
-
 import hackathon.server.models.db.Patient;
 import hackathon.server.models.db.PatientToProtocol;
 import hackathon.server.models.db.Protocol;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.w3c.dom.ls.LSException;
-
 import org.springframework.web.bind.annotation.*;
-
 
 import java.sql.Date;
 import java.time.Instant;
@@ -76,16 +55,18 @@ public class ClientController {
         if (patientSignUpRequest.getBirthDate() != null) {
             Instant birthDayInstant = Instant.parse(patientSignUpRequest.getBirthDate());
         }
+
         Patient patient = new Patient();
-        patient.setUuid(UUID.randomUUID().toString());
-        patient.setIdNumber(patientSignUpRequest.getIdNumber());
-        patient.setFirstName(patientSignUpRequest.getFirstName());
-        patient.setLastName(patientSignUpRequest.getLastName());
+
         if (patientSignUpRequest.getBirthDate() != null) {
             Instant birthDayInstant = Instant.parse(patientSignUpRequest.getBirthDate());
             patient.setBirthDate(new Date(birthDayInstant.toEpochMilli()));
         }
 
+        patient.setUuid(UUID.randomUUID().toString());
+        patient.setIdNumber(patientSignUpRequest.getIdNumber());
+        patient.setFirstName(patientSignUpRequest.getFirstName());
+        patient.setLastName(patientSignUpRequest.getLastName());
         patient.setGender(patientSignUpRequest.getGender().getValue());
         patient.setPassword(encodedPassword);
         patient.setPhone(patientSignUpRequest.getPhoneNumber());
@@ -153,7 +134,12 @@ public class ClientController {
     @ResponseBody
     public List<ProtocolShortDataReply> getProtocols() {
         List<Protocol> protocols =  protocolRepository.findAll();
+        return mapProtocols(protocols);
+    }
+
+    private List<ProtocolShortDataReply> mapProtocols(List<Protocol> protocols) {
         List<ProtocolShortDataReply> protocolShortDataReplies = new ArrayList<>();
+
         for (Protocol protocol : protocols) {
             ProtocolShortDataReply protocolShortDataReply = new ProtocolShortDataReply();
             protocolShortDataReply.setProtocolId(protocol.getId());
@@ -164,20 +150,27 @@ public class ClientController {
     }
 
     @PostMapping("/exerciseRecords")
-    public ResponseEntity exerciseRecords(@RequestBody ExerciseRecordRequest exerciseRecord) {
+    public ResponseEntity<String> exerciseRecords(@RequestBody ExerciseRecordRequest exerciseRecord) {
         DBInserter.insertExerciseRecord(exerciseRecord);
-        return new ResponseEntity(HttpStatus.OK) ;
+        return ResponseEntity.ok().body(null) ;
     }
 
     @GetMapping("/protocol/{id}")
     @ResponseBody
     public ProtocolDataReply protocolById(@PathVariable("id") Long id) {
         ProtocolDataReply replyProtocolData = new ProtocolDataReply();
-        Protocol p = protocolRepository.findById(id).get();
+        Protocol protocol = protocolRepository.findById(id).get();
         replyProtocolData.setProtocolId(id);
-        replyProtocolData.setProtocolName(p.getName());
+        replyProtocolData.setProtocolName(protocol.getName());
 
         List<Exercise> exercises = exerciseRepository.findByProtocolId(id);
+        List<ExerciseDataReply> mappedExercises = mapExercises(exercises);
+        replyProtocolData.setExercises(mappedExercises);
+
+        return replyProtocolData;
+    }
+
+    private List<ExerciseDataReply> mapExercises(List<Exercise> exercises) {
         List<ExerciseDataReply> mappedExercises = new ArrayList<>();
 
         for(Exercise exercise : exercises){
@@ -192,9 +185,8 @@ public class ClientController {
 
             mappedExercises.add(mappedExercise);
         }
-        replyProtocolData.setExercises(mappedExercises);
 
-        return replyProtocolData;
+        return mappedExercises;
     }
 
 }

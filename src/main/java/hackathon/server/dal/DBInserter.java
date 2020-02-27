@@ -1,6 +1,6 @@
 package hackathon.server.dal;
 
-import hackathon.server.Utils;
+import hackathon.server.utils.Utils;
 import hackathon.server.dal.crud.ExcelDataRepository;
 import hackathon.server.dal.crud.ExerciseRecordRepository;
 import hackathon.server.dal.crud.ExerciseRepository;
@@ -8,16 +8,15 @@ import hackathon.server.dal.crud.PatientRepository;
 import hackathon.server.models.api.ExcelDataRequest;
 import hackathon.server.models.api.ExerciseRecordRequest;
 import hackathon.server.models.db.ExcelData;
-import hackathon.server.models.db.Exercise;
 import hackathon.server.models.db.ExerciseRecord;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
+@Component
 public class DBInserter {
 
     @Autowired
@@ -68,8 +67,8 @@ public class DBInserter {
     }
 
     public void insertExcelData(List<ExcelData> excelData) {
-        for(ExcelData a : excelData) {
-            excelDataRepository.save(a);
+        for(ExcelData excelData1 : excelData) {
+            excelDataRepository.save(excelData1);
         }
     }
 }

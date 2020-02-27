@@ -1,6 +1,7 @@
 package hackathon.server.models.api;
 
 import lombok.Data;
+
 import java.util.List;
 
 @Data

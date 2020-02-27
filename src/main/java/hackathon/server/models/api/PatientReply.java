@@ -2,7 +2,6 @@ package hackathon.server.models.api;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import hackathon.server.models.api.enums.Gender;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.Date;
