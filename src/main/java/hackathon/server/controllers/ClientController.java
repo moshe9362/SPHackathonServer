@@ -6,10 +6,7 @@ import hackathon.server.dal.crud.PatientRepository;
 import hackathon.server.dal.crud.PatientToProtocolRepository;
 import hackathon.server.dal.crud.ProtocolRepository;
 import hackathon.server.models.api.*;
-import hackathon.server.models.db.Exercise;
-import hackathon.server.models.db.Patient;
-import hackathon.server.models.db.PatientToProtocol;
-import hackathon.server.models.db.Protocol;
+import hackathon.server.models.db.*;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -121,6 +118,10 @@ public class ClientController {
 
         PatientToProtocol patientToProtocol = new PatientToProtocol();
 
+        PatientToProtocolPK patientToProtocolPK = new PatientToProtocolPK();
+        patientToProtocolPK.setPatientUuid(protocolToUserRequest.getUserUuid());
+        patientToProtocolPK.setProtocolId(protocolToUserRequest.getProtocolId());
+        patientToProtocol.setId(patientToProtocolPK);
         patientToProtocol.setPatientUuid(protocolToUserRequest.getUserUuid());
         patientToProtocol.setProtocolId(protocolToUserRequest.getProtocolId());
         patientToProtocol.setStartDate(new Date(Instant.parse(protocolToUserRequest.getStartDate()).toEpochMilli()));
