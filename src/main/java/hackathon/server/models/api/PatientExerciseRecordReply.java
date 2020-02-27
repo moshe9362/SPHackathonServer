@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 public class PatientExerciseRecordReply {
-    private long exerciseRecordId;
+    private long id;
     private long exerciseId;
     private String exerciseName;
     private long exerciseTypeId;

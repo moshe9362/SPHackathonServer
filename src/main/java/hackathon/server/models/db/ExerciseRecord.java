@@ -28,10 +28,10 @@ public class ExerciseRecord {
     private Date startOfExercise;
 
     @Column(name = "end_of_exercise")
-    private long endOfExercise;
+    private Date endOfExercise;
 
     @Convert(converter = GsonJsonElementConverter.class)
-    @Column(name = "extra_data")
-    private JsonElement extraData;
+    @Column(name = "exercise_data")
+    private JsonElement exerciseData;
 
 }
