@@ -12,7 +12,9 @@ import hackathon.server.models.db.ExerciseRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,8 +49,9 @@ public class DBInserter {
             mappedExcelData.setAngle(old.getAngle());
             mappedExcelData.setExerciseRecordId(id);
 
-            Timestamp excelDataTimeStamp = Utils.convertStringToTimeStamp(old.getTimeStamp());
-            mappedExcelData.setTimestamp(excelDataTimeStamp);
+            Instant instant = Instant.parse(old.getTimeStamp());
+            Date date = new Date(instant.toEpochMilli());
+            mappedExcelData.setTimestamp(date);
 
             mappedExcelDataList.add(mappedExcelData);
         }
@@ -60,8 +63,12 @@ public class DBInserter {
         ExerciseRecord mappedExerciseRecord = new ExerciseRecord();
         mappedExerciseRecord.setExerciseId(exerciseRecordRequest.getExerciseId());
         mappedExerciseRecord.setPatientUuid(exerciseRecordRequest.getUserUuid());
-        mappedExerciseRecord.setStartOfExercise(Utils.convertStringToDate(exerciseRecordRequest.getStartDateOfExercise()));
-        mappedExerciseRecord.setEndOfExercise(Utils.convertStringToDate(exerciseRecordRequest.getEndDateOfExercise()));
+        Instant startInstant = Instant.parse(exerciseRecordRequest.getStartDateOfExercise());
+        Date startDate = new Date(startInstant.toEpochMilli());
+        mappedExerciseRecord.setStartOfExercise(startDate);
+        Instant endInstant = Instant.parse(exerciseRecordRequest.getStartDateOfExercise());
+        Date endDate = new Date(endInstant.toEpochMilli());
+        mappedExerciseRecord.setEndOfExercise(endDate);
         mappedExerciseRecord.setExerciseData(exerciseRecordRequest.getExerciseData());
         return mappedExerciseRecord;
     }
