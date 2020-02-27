@@ -11,4 +11,7 @@ public interface ExerciseRepository extends CrudRepository<Exercise, Long> {
 
     List<Exercise> findAll();
 
+    List<Exercise> findByProtocolId(Long protocolId);
+
+
 }

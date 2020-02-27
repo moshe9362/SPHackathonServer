@@ -1,8 +1,10 @@
 package hackathon.server.controllers;
 
+import com.google.gson.JsonElement;
 import hackathon.server.dal.DBInserter;
-import hackathon.server.models.api.ExcelDataRequest;
-import hackathon.server.models.api.ExerciseRecordRequest;
+import hackathon.server.dal.crud.ExerciseRepository;
+import hackathon.server.models.api.*;
+import hackathon.server.models.db.Exercise;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,10 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import hackathon.server.dal.crud.PatientRepository;
 import hackathon.server.dal.crud.PatientToProtocolRepository;
 import hackathon.server.dal.crud.ProtocolRepository;
-import hackathon.server.models.api.PatientLoginReply;
-import hackathon.server.models.api.PatientLoginRequest;
-import hackathon.server.models.api.PatientSignUpRequest;
-import hackathon.server.models.api.ProtocolShortDataReply;
 import hackathon.server.models.db.Patient;
 import hackathon.server.models.db.PatientToProtocol;
 import hackathon.server.models.db.Protocol;
@@ -26,6 +24,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.w3c.dom.ls.LSException;
 
 import java.sql.Date;
 import java.time.Instant;
@@ -41,16 +40,19 @@ public class ClientController {
     private PatientRepository patientRepository;
     private PatientToProtocolRepository patientToProtocolRepository;
     private ProtocolRepository protocolRepository;
+    private ExerciseRepository exerciseRepository;
     private DBInserter DBInserter;
 
     public ClientController(DBInserter DBInserter,
                             PatientRepository patientRepository,
                             PatientToProtocolRepository patientToProtocolRepository,
-                            ProtocolRepository protocolRepository) {
+                            ProtocolRepository protocolRepository,
+                            ExerciseRepository exerciseRepository) {
         this.DBInserter = DBInserter;
         this.patientRepository = patientRepository;
         this.patientToProtocolRepository = patientToProtocolRepository;
         this.protocolRepository = protocolRepository;
+        this.exerciseRepository = exerciseRepository;
     }
 
     @PostMapping("/user/signUp")
@@ -137,7 +139,31 @@ public class ClientController {
     }
 
     @GetMapping("/protocol/{id}")
-    public String protocolById(@PathVariable("id") String id) {
-        return id;
+    @ResponseBody
+    public ProtocolDataReply protocolById(@PathVariable("id") Long id) {
+        ProtocolDataReply replyProtocolData = new ProtocolDataReply();
+        Protocol p = protocolRepository.findById(id).get();
+        replyProtocolData.setProtocolId(id);
+        replyProtocolData.setProtocolName(p.getName());
+
+        List<Exercise> exercises = exerciseRepository.findByProtocolId(id);
+        List<ExerciseDataReply> mappedExercises = new ArrayList<>();
+
+        for(Exercise exercise : exercises){
+            ExerciseDataReply mappedExercise = new ExerciseDataReply();
+            mappedExercise.setExerciseId(exercise.getId());
+            mappedExercise.setExerciseName(exercise.getName());
+            mappedExercise.setExerciseTypeId(exercise.getExerciseType().getId());
+            mappedExercise.setExerciseTypeName(exercise.getExerciseType().getName());
+            mappedExercise.setStartDayInProtocol(exercise.getStartDayInProtocol());
+            mappedExercise.setEndDayInProtocol(exercise.getEndDayInProtocol());
+            mappedExercise.setProperties(exercise.getProperties());
+
+            mappedExercises.add(mappedExercise);
+        }
+        replyProtocolData.setExercises(mappedExercises);
+
+        return replyProtocolData;
     }
+
 }
