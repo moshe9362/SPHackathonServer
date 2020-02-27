@@ -1,5 +1,16 @@
 package hackathon.server.controllers;
 
+import hackathon.server.dal.crud.ExerciseRecordRepository;
+import hackathon.server.dal.crud.ExerciseRepository;
+import hackathon.server.models.api.PatientExerciseRecordReply;
+import hackathon.server.models.db.Exercise;
+import hackathon.server.models.db.ExerciseRecord;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import hackathon.server.dal.crud.ExcelDataRepository;
 import hackathon.server.dal.crud.ExerciseRecordRepository;
 import hackathon.server.dal.crud.PatientRepository;
@@ -20,14 +31,21 @@ import java.util.*;
 @Controller
 public class DoctorController {
 
-    @Autowired
-    PatientRepository patientRepository;
+    private PatientRepository patientRepository;
+    private ExerciseRepository exerciseRepository;
+    private ExerciseRecordRepository exerciseRecordRepository;
+    private ExcelDataRepository excelDataRepository;
 
     @Autowired
-    ExerciseRecordRepository exerciseRecordRepository;
-
-    @Autowired
-    ExcelDataRepository excelDataRepository;
+    public DoctorController(PatientRepository patientRepository,
+                            ExerciseRepository exerciseRepository,
+                            ExerciseRecordRepository exerciseRecordRepository,
+                            ExcelDataRepository excelDataRepository) {
+        this.patientRepository = patientRepository;
+        this.exerciseRepository = exerciseRepository;
+        this.exerciseRecordRepository = exerciseRecordRepository;
+        this.excelDataRepository = excelDataRepository;
+    }
 
     @GetMapping("/patients")
     @ResponseBody
@@ -53,10 +71,37 @@ public class DoctorController {
         return patientReply;
     }
 
+    @GetMapping("/exerciseRecordsForId/{uuid}")
+    public ResponseEntity<List<PatientExerciseRecordReply>> getExerciseRecordsById(@PathVariable("uuid") Long uuid) {
+        List<ExerciseRecord> recordsList = exerciseRecordRepository.findByPatientUuid(uuid.toString());
+        List<PatientExerciseRecordReply> result = map(recordsList);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    private List<PatientExerciseRecordReply> map(List<ExerciseRecord> list) {
+        List<PatientExerciseRecordReply> patientExerciseRecordReplies = new ArrayList<>();
+        for (ExerciseRecord r : list) {
+            PatientExerciseRecordReply patientExerciseRecordReply = new PatientExerciseRecordReply();
+            Exercise exercise = exerciseRepository.findById(r.getExerciseId()).get();
+            patientExerciseRecordReply.setExerciseId(exercise.getId());
+            patientExerciseRecordReply.setExerciseName(exercise.getName());
+            patientExerciseRecordReply.setExerciseTypeId(exercise.getExerciseType().getId());
+            patientExerciseRecordReply.setExerciseTypeName(exercise.getExerciseType().getName());
+
+            patientExerciseRecordReply.setEndDateTimeOfExercise(r.getEndOfExercise().toString());
+            patientExerciseRecordReply.setExerciseData(r.getExerciseData());
+
+            patientExerciseRecordReply.setId(r.getId());
+        }
+
+        return patientExerciseRecordReplies;
+    }
+
+
     @GetMapping("/exercisePatientExcelData/{uuid}")
     @ResponseBody
     public ArrayList<PatientExercisesExcelDataReply> getAllPatientExercisesExcelData(@PathVariable("uuid") String patientUuid) {
-        List<ExerciseRecord>  patientExerciseRecords = exerciseRecordRepository.findAllByPatientUuid(patientUuid);
+        List<ExerciseRecord> patientExerciseRecords = exerciseRecordRepository.findByPatientUuid(patientUuid);
         ArrayList<PatientExercisesExcelDataReply> reply = new ArrayList<>();
         for (ExerciseRecord exerciseRecord: patientExerciseRecords) {
             reply.addAll(getExerciseExcelData(exerciseRecord));
@@ -75,17 +120,16 @@ public class DoctorController {
 
     private PatientExercisesExcelDataReply createPatientExercisesExcelDataReply(ExcelData excelDataEntry, ExerciseRecord exerciseRecord) {
         PatientExercisesExcelDataReply patientExercisesExcelDataReply = new PatientExercisesExcelDataReply();
+        Exercise exercise = exerciseRepository.findById(exerciseRecord.getExerciseId()).get();
         patientExercisesExcelDataReply.setExerciseRecordId(exerciseRecord.getId());
         patientExercisesExcelDataReply.setExerciseId(exerciseRecord.getExerciseId());
-        patientExercisesExcelDataReply.setExerciseName(exerciseRecord.getExercise().getName());
+        patientExercisesExcelDataReply.setExerciseName(exercise.getName());
         patientExercisesExcelDataReply.setAngle(excelDataEntry.getAngle());
         patientExercisesExcelDataReply.setTimeStamp(new Date(excelDataEntry.getTimestamp().getTime()));
-        patientExercisesExcelDataReply.setExerciseTypeId(exerciseRecord.getExercise().getExerciseType().getId());
-        patientExercisesExcelDataReply.setExerciseTypeName(exerciseRecord.getExercise().getExerciseType().getName());
+        patientExercisesExcelDataReply.setExerciseTypeId(exercise.getExerciseType().getId());
+        patientExercisesExcelDataReply.setExerciseTypeName(exercise.getExerciseType().getName());
 
         return patientExercisesExcelDataReply;
     }
-
-
 
 }

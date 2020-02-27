@@ -32,12 +32,4 @@ public class ExerciseRecord {
     @Column(name = "exercise_data")
     private JsonElement exerciseData;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "exercise_id" ,insertable = false,updatable = false)
-    private Exercise exercise;
-
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "patient_uuid" ,insertable = false,updatable = false)
-    private Patient patient;
-
 }
