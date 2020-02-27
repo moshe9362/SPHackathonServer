@@ -2,7 +2,9 @@ package hackathon.server.models.db;
 
 import lombok.Data;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
 import java.sql.Date;
 
 @Data

@@ -1,11 +1,13 @@
 package hackathon.server.models.db;
 
+import lombok.Data;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
-import java.sql.Date;
 
 @Embeddable
+@Data
 public class PatientToProtocolPK implements Serializable {
 
     @Column(name = "patient_uuid")

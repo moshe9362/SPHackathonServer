@@ -52,5 +52,4 @@ public class DBTestController {
 
         return patientRepository.getAllPatientUuids();
     }
-
 }
