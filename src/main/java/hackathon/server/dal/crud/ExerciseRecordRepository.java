@@ -11,4 +11,7 @@ public interface ExerciseRecordRepository extends CrudRepository<ExerciseRecord,
 
     List<ExerciseRecord> findAll();
 
+    List<ExerciseRecord> findAllByPatientUuid(String patientUuid);
+
+
 }
