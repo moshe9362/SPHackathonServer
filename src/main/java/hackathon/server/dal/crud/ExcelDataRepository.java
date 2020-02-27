@@ -11,4 +11,6 @@ public interface ExcelDataRepository extends CrudRepository<ExcelData, Long> {
 
     List<ExcelData> findAll();
 
+    List<ExcelData> findAllByExerciseRecordId(long exerciseRecordId);
+
 }
